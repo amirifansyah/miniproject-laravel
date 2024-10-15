@@ -30,17 +30,15 @@ class PelangganController extends Controller
             'jenis_kelamin' => 'required|in:L,P',
         ]);
     
-        $maxId = Pelanggan::withTrashed()->max('id'); // Termasuk yang dihapus
-        $nextId = $maxId ? $maxId + 1 : 1; // Jika tidak ada pelanggan, mulai dari 1
-        $id_pelanggan = 'PELANGGAN_' . $nextId; // Membuat ID pelanggan baru
+        $maxId = Pelanggan::withTrashed()->max('id'); 
+        $nextId = $maxId ? $maxId + 1 : 1; 
+        $id_pelanggan = 'PELANGGAN_' . $nextId; 
     
-        // Mencari ID yang unik
         while (Pelanggan::withTrashed()->where('id_pelanggan', $id_pelanggan)->exists()) {
             $nextId++;
-            $id_pelanggan = 'PELANGGAN_' . $nextId; // Membuat ID baru jika sudah ada
+            $id_pelanggan = 'PELANGGAN_' . $nextId; 
         }
-    
-        // Menyimpan data pelanggan dengan ID unik
+        
         try {
             $pelanggan = Pelanggan::create(array_merge($request->all(), ['id_pelanggan' => $id_pelanggan]));
             return response()->json($pelanggan, 201);
@@ -52,7 +50,7 @@ class PelangganController extends Controller
 
     public function show($id)
     {
-        return Pelanggan::withTrashed()->findOrFail($id); // Mendapatkan item termasuk yang terhapus
+        return Pelanggan::withTrashed()->findOrFail($id); 
     }
 
     public function update(Request $request, $id)
@@ -65,14 +63,14 @@ class PelangganController extends Controller
     public function destroy($id)
     {
         $pelanggan = Pelanggan::withTrashed()->findOrFail($id);
-        $pelanggan->delete(); // Menggunakan soft delete
+        $pelanggan->delete(); 
         return response()->noContent();
     }
 
     public function restore($id)
     {
         $pelanggan = Pelanggan::withTrashed()->findOrFail($id);
-        $pelanggan->restore(); // Mengembalikan item yang dihapus
+        $pelanggan->restore(); 
         return response()->json($pelanggan);
     }
 }
